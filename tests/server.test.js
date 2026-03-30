@@ -25,4 +25,43 @@ describe('DevOps Dashboard API', () => {
       expect(res.body.endpoints).toBeDefined();
     });
   });
+
+  describe('GET /api/incidents', () => {
+    it('should return incidents list', async () => {
+      const res = await request(app)
+        .get('/api/incidents')
+        .expect(200);
+      
+      expect(res.body.success).toBe(true);
+      expect(res.body.count).toBeDefined();
+      expect(Array.isArray(res.body.incidents)).toBe(true);
+    });
+  });
+
+  describe('POST /api/incidents', () => {
+    it('should create incident with valid data', async () => {
+      const newIncident = {
+        title: 'Test incident',
+        description: 'Test description',
+        severity: 'Medium'
+      };
+
+      const res = await request(app)
+        .post('/api/incidents')
+        .send(newIncident)
+        .expect(201);
+      
+      expect(res.body.success).toBe(true);
+      expect(res.body.incident.title).toBe('Test incident');
+    });
+
+    it('should reject incident without title', async () => {
+      const res = await request(app)
+        .post('/api/incidents')
+        .send({ description: 'No title', severity: 'High' })
+        .expect(400);
+      
+      expect(res.body.error).toBe('Validation failed');
+    });
+  });
 });
