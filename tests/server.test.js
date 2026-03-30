@@ -63,5 +63,51 @@ describe('DevOps Dashboard API', () => {
       
       expect(res.body.error).toBe('Validation failed');
     });
+
+    it('should reject incident with invalid severity', async () => {
+      const res = await request(app)
+        .post('/api/incidents')
+        .send({
+          title: 'Test',
+          description: 'Test',
+          severity: 'Invalid'
+        })
+        .expect(400);
+      
+      expect(res.body.error).toBe('Validation failed');
+    });
+
+    it('should trim whitespace from title', async () => {
+      const res = await request(app)
+        .post('/api/incidents')
+        .send({
+          title: '  Trimmed incident  ',
+          description: 'Test',
+          severity: 'Low'
+        })
+        .expect(201);
+      
+      expect(res.body.incident.title).toBe('Trimmed incident');
+    });
+  });
+
+  describe('GET /api/incidents/:id', () => {
+    it('should return 404 for non-existent incident', async () => {
+      const res = await request(app)
+        .get('/api/incidents/99999')
+        .expect(404);
+      
+      expect(res.body.error).toBe('Not found');
+    });
+  });
+
+  describe('404 Handler', () => {
+    it('should return 404 for unknown routes', async () => {
+      const res = await request(app)
+        .get('/unknown-route')
+        .expect(404);
+      
+      expect(res.body.error).toBe('Not Found');
+    });
   });
 });
