@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
     message: err.message
   });
 });
-
+// Start server only if this file is run directly (not imported)
 // Only start server if this module is run directly
 if (require.main === module) {
   const server = app.listen(PORT, '0.0.0.0', () => {
