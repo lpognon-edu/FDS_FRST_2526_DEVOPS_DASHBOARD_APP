@@ -1,4 +1,52 @@
 const request = require('supertest');
+
+// Mock the database before loading app
+jest.mock('../src/db', () => ({
+  query: jest.fn(async (text, params) => {
+    // Mock INSERT response for creating incidents
+    if (text.includes('INSERT INTO incidents')) {
+      return {
+        rows: [{
+          id: 1,
+          title: params[0].trim(),
+          description: params[1] ? params[1].trim() : '',
+          severity: params[2],
+          created_at: new Date(),
+          updated_at: new Date()
+        }]
+      };
+    }
+    return { rows: [] };
+  }),
+  getAll: jest.fn(async () => {
+    return [
+      {
+        id: 1,
+        title: 'Sample incident',
+        description: 'This is a sample incident',
+        severity: 'Medium',
+        created_at: new Date('2026-04-01'),
+        updated_at: new Date('2026-04-01')
+      }
+    ];
+  }),
+  getOne: jest.fn(async (text, params) => {
+    // Return null for non-existent incident
+    if (params[0] === 99999) {
+      return null;
+    }
+    return {
+      id: 1,
+      title: 'Sample incident',
+      description: 'This is a sample incident',
+      severity: 'Medium',
+      created_at: new Date('2026-04-01'),
+      updated_at: new Date('2026-04-01')
+    };
+  }),
+  healthCheck: jest.fn(async () => true)
+}));
+
 const app = require('../src/server');
 
 describe('DevOps Dashboard API', () => {
