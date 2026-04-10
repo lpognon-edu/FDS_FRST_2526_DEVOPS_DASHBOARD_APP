@@ -61,3 +61,9 @@ describe('DevOps Dashboard - HTML Page', () => {
     });
   });
 });
+
+test('should display deployment status section', () => {
+const statusDiv = document.getElementById('deployment-status');
+expect(statusDiv).not.toBeNull();
+expect(statusDiv.textContent).toContain('Deployment Status');
+});

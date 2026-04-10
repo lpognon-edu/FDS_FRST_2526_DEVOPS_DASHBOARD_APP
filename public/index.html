@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +8,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
     <nav class="navbar navbar-dark bg-dark sticky-top">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h1">DevOps Dashboard</span>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" href="index.html">Dashboard</a>
+                <a class="nav-link" href="contact.html">Contact</a>
+            </div>
         </div>
     </nav>
     <main class="container-fluid p-4">
         <h1 class="mb-4">Deployment Status</h1>
+        
+        <!-- Ajouter une nouvelle section pour afficher le statut de déploiement -->
+        <div id="deployment-status">
+            <h2>Deployment Status</h2>
+            <p>Last deployment: <strong>2 hours ago</strong></p>
+            <p>Frequency: <strong>5 deployments per day</strong></p>
+        </div>
         
         <div class="row mb-4">
             <div class="col-md-4">
@@ -104,4 +117,5 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

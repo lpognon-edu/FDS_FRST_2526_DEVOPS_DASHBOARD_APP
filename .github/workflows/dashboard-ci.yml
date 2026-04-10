@@ -1,0 +1,124 @@
+# =====================================================
+# ADVANCED LEVEL - GitHub Actions CI/CD Workflow
+# =====================================================
+#
+# Learning objectives:
+# ✓ Multi-job workflows with complex dependencies
+# ✓ Semantic versioning (automated version bumping)
+# ✓ GitHub Releases and artifacts
+# ✓ Permissions management
+# ✓ Docker image building
+# ✓ Pre-release versions (alpha, beta, pre)
+#
+# Key concepts:
+# - 3 jobs: test → build → deploy
+# - Semantic-release for automated versioning
+# - GitHub Releases creation
+# - Docker Buildx for container images
+# - Explicit permissions for security
+# - Production-ready CI/CD pipeline
+#
+# Related files:
+# - See WORKFLOWS_LEARNING_GUIDE.md for learning progression
+# - basic-ci.yml for beginner examples
+# - standard-ci.yml for intermediate examples
+
+name: Dashboard CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [ 18.x ]
+    
+    steps:
+    - uses: actions/checkout@v6
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Lint code with ESLint
+      run: npm run lint
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Generate coverage report
+      run: npm test -- --coverage
+      continue-on-error: true
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info
+        fail_ci_if_error: false
+      continue-on-error: true
+
+  build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v6
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: false
+
+  deploy:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    permissions:
+      contents: write
+      issues: write
+    
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Use Node.js 18
+      uses: actions/setup-node@v6
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: npx semantic-release
+    
+    - name: Upload artifacts to GitHub Release
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: distribution-artifacts
+        path: dist/*.tar.gz
+        retention-days: 90
+

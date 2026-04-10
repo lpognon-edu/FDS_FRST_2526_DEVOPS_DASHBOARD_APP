@@ -1,0 +1,31 @@
+{
+  "branches": [
+    "main",
+    {
+      "name": "develop",
+      "prerelease": "pre"
+    }
+  ],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "npm run build",
+        "publishCmd": "npm run publish:artifact"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "dist/**/*.tar.gz",
+            "label": "Application artifact"
+          }
+        ]
+      }
+    ]
+  ]
+}

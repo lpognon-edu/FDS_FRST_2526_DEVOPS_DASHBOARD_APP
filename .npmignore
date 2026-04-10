@@ -1,0 +1,35 @@
+# Don't publish these files to npm registry
+
+# Git
+.git
+.gitignore
+.github
+
+# Dependencies
+node_modules
+
+# Testing
+tests
+coverage
+jest.config.js
+
+# Documentation
+README.md
+CHANGELOG.md
+
+# CI/CD
+.releaserc.json
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist
