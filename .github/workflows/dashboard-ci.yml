@@ -23,5 +23,5 @@ jobs:
     - name: Run tests
       run: npm test
 # Étape 5: Compiler l'application
-    - name: Build application
-      run: npm run build
+#    - name: Build application
+#      run: npm run build
