@@ -56,11 +56,9 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Server
-let server;
-
-function startServer() {
-  server = app.listen(PORT, '0.0.0.0', () => {
+// Only start server if this module is run directly
+if (require.main === module) {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`✓ DevOps Dashboard running on http://localhost:${PORT}`);
   });
 
@@ -71,12 +69,6 @@ function startServer() {
       process.exit(0);
     });
   });
-
-  return server;
-}
-
-if (require.main === module) {
-  startServer();
 }
 
 module.exports = app;
