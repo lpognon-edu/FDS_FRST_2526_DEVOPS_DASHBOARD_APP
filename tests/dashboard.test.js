@@ -45,7 +45,7 @@ describe('DevOps Dashboard - HTML Page', () => {
       const res = await request(app)
         .get('/')
         .expect(200);
-      
+      expect(res.status).toBe(200);
       expect(res.text).toContain('bootstrap');
     });
   });
